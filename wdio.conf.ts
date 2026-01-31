@@ -125,14 +125,32 @@ export const config: WebdriverIO.Config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec'],
-
+    reporters: [
+    'spec',
+    ['allure', {
+      outputDir: 'allure-results',
+      disableWebdriverStepsReporting: true,
+      disableWebdriverScreenshotsReporting: true,
+      useCucumberStepReporter: false,
+      addConsoleLogs: true,
+      disableMochaHooks: false
+    }]
+    ],
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000
     },
+    onPrepare: function (config, capabilities) {
+    // Очистка папки allure-report
+    const reportDir = path.join(process.cwd(), 'allure-report');
+    
+    if (fs.existsSync(reportDir)) {
+      fs.rmSync(reportDir, { recursive: true, force: true });
+      console.log('✓ Папка allure-report очищена');
+    }
+  },
 
     //
     // =====
